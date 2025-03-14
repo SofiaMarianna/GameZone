@@ -43,6 +43,12 @@ ul li {
 .lista-nav li {
     text-transform: uppercase;
 }
+.mobile-menu {
+    display: none;
+}
+.mobile-menu-icon {
+    display: none;
+}
 .jogos-principal {
     display: flex;
     justify-content: space-around;
@@ -185,7 +191,7 @@ ul li {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     height: 322px;
     padding-top: 25px;
-    
+    gap: 5px;
 }
 .ver-jogos {
     display: flex;
@@ -231,7 +237,7 @@ ul li {
 }
 @media (max-width: 390px) {
     .nav {
-        flex-direction: column;
+        flex-direction: row;
         align-items: flex-start;
         max-width: 390;
     }
@@ -240,6 +246,15 @@ ul li {
     }
     .logo-gamezone {
         font-size: 22px;
+        padding-top: 15px;
+    }
+    .mobile-menu-icon {
+        display: block;
+    }
+    .mobile-menu-icon button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
         padding-top: 15px;
     }
     .titulo {
