@@ -19,6 +19,7 @@ body {
 .header-container {
     background: #0A0F0D;
     padding-inline: 16px;
+    z-index: 10000;
 }
 .nav {
     max-width: 1280px;
@@ -189,9 +190,54 @@ ul li {
 .imagens-flex {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    height: 322px;
     padding-top: 25px;
     gap: 5px;
+}
+
+/* Cards de jogo com botão de favorito */
+.game-card{
+    position: relative;
+    display: inline-block;
+}
+.game-card img{
+    display: block;
+    border-radius: 6px;
+}
+.fav-btn{
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.45);
+    border: none;
+    color: #ffd700;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 18px;
+}
+.fav-btn:focus{ outline: none; }
+.fav-item h3{ font-size: 14px; margin-top: 8px; color: #fff; }
+
+#favorites-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding-top: 25px;
+    gap: 5px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#favorites-list .game-card{ display:block; height:322px; overflow:hidden; }
+#favorites-list .game-card img{ width:100%; height:100%; object-fit:cover; display:block; border-radius:6px; }
+
+@media (max-width: 768px) {
+    #favorites-list { display: flex; flex-direction: column; gap: 15px; }
+    #favorites-list .game-card{ height: auto; }
+    #favorites-list .game-card img{ height: auto; }
 }
 .ver-jogos {
     display: flex;
