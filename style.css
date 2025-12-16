@@ -57,9 +57,74 @@ ul li {
 }
 .titulo {
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
+    align-items: center;
     padding-top: 100px;
+    gap: 20px;
 }
+
+.filtros-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 1000px;
+    align-items: center;
+}
+
+.dispositivos {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.botao {
+    padding: 10px 20px;
+    background: transparent;
+    border: 2px solid #66C0F4;
+    color: #66C0F4;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.botao:hover {
+    background: #66C0F4;
+    color: #000;
+}
+
+.botao.ativo {
+    background: #66C0F4;
+    color: #000;
+    box-shadow: 0 0 10px rgba(102, 192, 244, 0.5);
+}
+
+.busca-input {
+    padding: 12px 20px;
+    border: 2px solid #414141;
+    background: transparent;
+    color: #FFF;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.busca-input::placeholder {
+    color: #717171;
+}
+
+.busca-input:focus {
+    outline: none;
+    border-color: #66C0F4;
+    box-shadow: 0 0 8px rgba(102, 192, 244, 0.3);
+}
+
 .titulo-contato {
     display: flex;
     justify-content: left;
@@ -329,6 +394,22 @@ ul li {
         flex-direction: column;
         align-items: center;
         gap: 15px;
+    }
+    .filtros-container {
+        flex-direction: column;
+        width: 90%;
+        max-width: 100%;
+    }
+    .dispositivos {
+        gap: 10px;
+    }
+    .botao {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+    .busca-input {
+        max-width: 90%;
+        padding: 10px 15px;
     }
     h1 {
         justify-content: center;
