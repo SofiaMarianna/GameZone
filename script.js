@@ -58,76 +58,146 @@ LIsdanav.forEach(li => {
 });
 
 
-/* Favoritos: armazenamento e renderização */
+/* Favoritos: locastorage e renderização */
 const FAV_KEY = 'gamezone_favs';
 
-const _loadFavs = () => {
-    try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; }
-};
-const _saveFavs = (arr) => localStorage.setItem(FAV_KEY, JSON.stringify(arr));
-const isFav = (id) => _loadFavs().some(g => String(g.id) === String(id));
-const addFav = (game) => { const f = _loadFavs(); if (!f.some(g => String(g.id) === String(game.id))) { f.push(game); _saveFavs(f); } };
-const removeFav = (id) => _saveFavs(_loadFavs().filter(g => String(g.id) !== String(id)));
-const toggleFav = (game) => isFav(game.id) ? removeFav(game.id) : addFav(game);
+function loadFavs() {
+    try {
+        var raw = localStorage.getItem(FAV_KEY);
+        if (raw) {
+            return JSON.parse(raw);
+        }
+        return [];
+    } catch (e) {
+        return [];
+    }
+}
 
-const updateFavVisual = (btn) => {
-    if (!btn) return;
-    const icon = btn.querySelector('i');
-    const fav = isFav(btn.dataset.id);
+function saveFavs(arr) {
+    localStorage.setItem(FAV_KEY, JSON.stringify(arr));
+}
+
+function isFav(id) {
+    var favs = loadFavs();
+    return favs.some(function (g) {
+        return String(g.id) === String(id);
+    });
+}
+
+function addFav(game) {
+    var favs = loadFavs();
+    var exists = favs.some(function (g) {
+        return String(g.id) === String(game.id);
+    });
+
+    if (!exists) {
+        favs.push(game);
+        saveFavs(favs);
+    }
+}
+
+function removeFav(id) {
+    var favs = loadFavs();
+    var next = favs.filter(function (g) {
+        return String(g.id) !== String(id);
+    });
+    saveFavs(next);
+}
+
+function toggleFav(game) {
+    if (isFav(game.id)) {
+        removeFav(game.id);
+    } else {
+        addFav(game);
+    }
+}
+
+function updateFavVisual(btn) {
+    if (!btn) {
+        return;
+    }
+
+    var icon = btn.querySelector('i');
+    var fav = isFav(btn.dataset.id);
+
     if (icon) {
-        icon.classList.toggle('fa-solid', fav);
-        icon.classList.toggle('fa-regular', !fav);
-    }
-    btn.style.color = fav ? '#ffd700' : '';
-};
-
-function escapeHtml(str){ return String(str || '').replace(/[&<>"']/g, s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[s])); }
-
-// ===== FUNÇÕES PARA CATÁLOGO INTERATIVO =====
-    function filtrarJogos() {
-        let jogosFilterados = jogos;
-
-        // Filtrar por dispositivo
-        if (filtroAtivo) {
-            jogosFilterados = jogosFilterados.filter(jogo => jogo.dispositivo === filtroAtivo);
+        if (fav) {
+            icon.classList.add('fa-solid');
+            icon.classList.remove('fa-regular');
+        } else {
+            icon.classList.add('fa-regular');
+            icon.classList.remove('fa-solid');
         }
-
-        // Filtrar por busca (nome)
-        if (buscaAtiva.trim()) {
-            const busca = buscaAtiva.toLowerCase();
-            jogosFilterados = jogosFilterados.filter(jogo => 
-                jogo.titulo.toLowerCase().includes(busca)
-            );
-        }
-
-        return jogosFilterados;
     }
 
-    function renderizarCatalogo(jogosList) {
-        if (!catalogo) return;
-
-        catalogo.innerHTML = '';
-
-        if (jogosList.length === 0) {
-            catalogo.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Nenhum jogo encontrado.</p>';
-            return;
-        }
-
-        jogosList.forEach(jogo => {
-            const div = document.createElement('div');
-            div.className = 'game-card';
-            div.innerHTML = `
-                <img src="${jogo.imagem}" alt="${escapeHtml(jogo.titulo)}" width="250" height="322">
-                <button class="fav-btn" data-id="${jogo.id}" data-title="${escapeHtml(jogo.titulo)}" data-img="${jogo.imagem}">
-                    <i class="fa-regular fa-star"></i>
-                </button>
-            `;
-            catalogo.appendChild(div);
-        });
-
-        // Inicializar visual dos botões (eventos são delegados globalmente)
-        catalogo.querySelectorAll('.fav-btn').forEach(btn => updateFavVisual(btn));
+    if (fav) {
+        btn.style.color = '#ffd700';
+    } else {
+        btn.style.color = '';
     }
+}
+
+function escapeHtml(str) {
+    var s = String(str || '');
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+
+    return s.replace(/[&<>"']/g, function (m) {
+        return map[m];
+    });
+}
+
+// função de catálogo interativo
+function filtrarJogos() {
+    let jogosFilterados = jogos;
+
+    // Filtrar por dispositivo
+    if (filtroAtivo) {
+        jogosFilterados = jogosFilterados.filter(jogo => jogo.dispositivo === filtroAtivo);
+    }
+
+    // Filtrar por busca (nome)
+    if (buscaAtiva.trim()) {
+        const busca = buscaAtiva.toLowerCase();
+        jogosFilterados = jogosFilterados.filter(jogo => 
+            jogo.titulo.toLowerCase().includes(busca)
+        );
+     }
+     return jogosFilterados;
+}
+
+function renderizarCatalogo(jogosList) {
+    if (!catalogo) return;
+
+    catalogo.innerHTML = '';
+
+    if (jogosList.length === 0) {
+        catalogo.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Nenhum jogo encontrado.</p>';
+        return;
+    }
+
+    jogosList.forEach(jogo => {
+        const div = document.createElement('div');
+        div.className = 'game-card';
+        div.innerHTML = `
+            <img src="${jogo.imagem}" alt="${escapeHtml(jogo.titulo)}" width="250" height="322">
+            <button class="fav-btn" data-id="${jogo.id}" data-title="${escapeHtml(jogo.titulo)}" data-img="${jogo.imagem}">
+                <i class="fa-regular fa-star"></i>
+            </button>
+        `;
+        catalogo.appendChild(div);
+    });
+
+    // Inicializar visual dos botões (eventos são delegados globalmente)
+    catalogo.querySelectorAll('.fav-btn').forEach(function (btn) {
+        updateFavVisual(btn);
+    });
+}
 
     function aplicarFiltros() {
         const jogosFiltrados = filtrarJogos();
@@ -164,53 +234,92 @@ function escapeHtml(str){ return String(str || '').replace(/[&<>"']/g, s=>({'&':
     }
 
     function renderFavorites(container, showAll = false){
-        const favs = _loadFavs();
-        if (!container) return;
-        if (!favs.length) {
-            container.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Você não tem favoritos.</p>';
-            const showBtn = document.querySelector('#show-all-btn'); if (showBtn) showBtn.style.display = 'none';
-            return;
-        }
+            var favs = loadFavs();
+            if (!container) {
+                return;
+            }
 
-        const toShow = showAll ? favs : favs.slice(0, 4);
-        container.innerHTML = toShow.map(g =>
-            `<div class="game-card fav-item">
-                <img src="${g.img}" alt="${escapeHtml(g.title)}" width="250" height="322">
-                <button class="fav-btn" data-id="${g.id}" data-title="${escapeHtml(g.title)}" data-img="${g.img}"><i class="fa-solid fa-star"></i></button>
-            </div>`
-        ).join('');
+            if (!favs || favs.length === 0) {
+                container.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Você não tem favoritos.</p>';
+                var showBtnNone = document.querySelector('#show-all-btn');
+                if (showBtnNone) {
+                    showBtnNone.style.display = 'none';
+                }
+                return;
+            }
 
-        container.querySelectorAll('.fav-btn').forEach(updateFavVisual);
+            var toShow;
+            if (showAll) {
+                toShow = favs;
+            } else {
+                toShow = favs.slice(0, 4);
+            }
 
-        const showBtn = document.querySelector('#show-all-btn');
-        if (showBtn){
-            if (favs.length <= 4) { showBtn.style.display = 'none'; }
-            else { showBtn.style.display = ''; showBtn.textContent = showAll ? 'Mostrar apenas 4' : 'Ver todos os Jogos'; showBtn.dataset.show = showAll ? 'true' : 'false'; }
-        }
+            container.innerHTML = toShow.map(function (g) {
+                return '<div class="game-card fav-item">' +
+                    '<img src="' + g.img + '" alt="' + escapeHtml(g.title) + '" width="250" height="322">' +
+                    '<button class="fav-btn" data-id="' + g.id + '" data-title="' + escapeHtml(g.title) + '" data-img="' + g.img + '"><i class="fa-solid fa-star"></i></button>' +
+                    '</div>';
+            }).join('');
+
+            container.querySelectorAll('.fav-btn').forEach(function (b) {
+                updateFavVisual(b);
+            });
+
+            var showBtn = document.querySelector('#show-all-btn');
+            if (showBtn) {
+                if (favs.length <= 4) {
+                    showBtn.style.display = 'none';
+                } else {
+                    showBtn.style.display = '';
+                    if (showAll) {
+                        showBtn.textContent = 'Mostrar apenas 4';
+                        showBtn.dataset.show = 'true';
+                    } else {
+                        showBtn.textContent = 'Ver todos os Jogos';
+                        showBtn.dataset.show = 'false';
+                    }
+                }
+            }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         // delegação única para todos os botões de favorito na página
-        document.addEventListener('click', (ev) => {
-            const btn = ev.target.closest('.fav-btn');
-            if (!btn) return;
+        document.addEventListener('click', function (ev) {
+            var btn = ev.target.closest('.fav-btn');
+            if (!btn) {
+                return;
+            }
+
             ev.stopPropagation();
-            const game = { id: btn.dataset.id, title: btn.dataset.title || '', img: btn.dataset.img || '' };
+
+            var game = {
+                id: btn.dataset.id,
+                title: btn.dataset.title || '',
+                img: btn.dataset.img || ''
+            };
+
             toggleFav(game);
+
             // atualizar todas as instâncias do mesmo botão (catalogo + favoritos)
-            document.querySelectorAll(`.fav-btn[data-id="${game.id}"]`).forEach(updateFavVisual);
-            const favContainer = document.querySelector('#favorites-list');
-            const showBtn = document.querySelector('#show-all-btn');
-            const showAll = showBtn && showBtn.dataset.show === 'true';
-            if (favContainer) renderFavorites(favContainer, showAll);
+            document.querySelectorAll('.fav-btn[data-id="' + game.id + '"]').forEach(function (d) {
+                updateFavVisual(d);
+            });
+
+            var favContainer = document.querySelector('#favorites-list');
+            var showBtnLocal = document.querySelector('#show-all-btn');
+            var showAll = showBtnLocal && showBtnLocal.dataset.show === 'true';
+            if (favContainer) {
+                renderFavorites(favContainer, showAll);
+            }
         });
 
         const favContainer = document.querySelector('#favorites-list');
         const showBtn = document.querySelector('#show-all-btn');
         if (favContainer) renderFavorites(favContainer, false);
         if (showBtn && favContainer){
-            showBtn.addEventListener('click', () => {
-                const currently = showBtn.dataset.show === 'true';
+            showBtn.addEventListener('click', function () {
+                var currently = showBtn.dataset.show === 'true';
                 renderFavorites(favContainer, !currently);
             });
         }
