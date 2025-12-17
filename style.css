@@ -631,3 +631,30 @@ ul li {
 .star.hover { color:#FFB84D; transform: translateY(-2px); }
 .rating-info { font-size:13px; color:#cfcfcf; margin-top:2px; }
 .indie-card .card-meta { gap:8px; padding:6px 8px; }
+
+.titulo-contato {
+  padding-top: 100px;
+  padding-left: 0;       
+  text-align: center;     
+}
+.main-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;              
+  gap: 24px;
+  padding: 20px 16px;
+}
+.contact-area {
+  display: flex;
+  justify-content: center;           
+  align-items: center;               
+  width: 100%;
+  padding: 24px 0;
+}
+.form-container {
+  width: 100%;
+  max-width: 420px;                  
+  margin: 0 auto;                    
+  box-sizing: border-box;
+}
+

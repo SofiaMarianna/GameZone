@@ -521,6 +521,94 @@ function renderizarCatalogo(jogosList) {
             }
     }
 
+    // Coloque este cód// contato.js
+(function(){
+  const FORM_KEY = 'gamezone_messages';
+
+  function saveMessage(obj){
+    try{
+      const raw = localStorage.getItem(FORM_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      arr.push(Object.assign({ts: new Date().toISOString()}, obj));
+      localStorage.setItem(FORM_KEY, JSON.stringify(arr));
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function $(sel){ return document.querySelector(sel); }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const form = $('#contactForm');
+    const nome = $('#nome');
+    const mensagem = $('#mensagem');
+    const errNome = $('#err-nome');
+    const errMsg = $('#err-mensagem');
+    const success = $('#form-success');
+
+    function clearErrors(){
+      errNome.textContent = '';
+      errMsg.textContent = '';
+      success.textContent = '';
+    }
+
+    function validate(){
+      let ok = true;
+      clearErrors();
+
+      const n = (nome.value || '').trim();
+      const m = (mensagem.value || '').trim();
+
+      if (!n){
+        errNome.textContent = 'Por favor, informe seu nome.';
+        ok = false;
+      } else if (n.length < 2){
+        errNome.textContent = 'Nome muito curto.';
+        ok = false;
+      }
+
+      if (!m){
+        errMsg.textContent = 'Escreva sua mensagem para que possamos ajudar.';
+        ok = false;
+      } else if (m.length < 6){
+        errMsg.textContent = 'Mensagem muito curta, descreva melhor o problema.';
+        ok = false;
+      }
+
+      return ok;
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      clearErrors();
+
+      if (!validate()) return;
+
+      const payload = {
+        nome: nome.value.trim(),
+        mensagem: mensagem.value.trim()
+      };
+
+      const ok = saveMessage(payload);
+      if (ok){
+        success.textContent = 'Sua mensagem foi enviada com sucesso!';
+        form.reset();
+        // opcional: remover a mensagem de sucesso após alguns segundos
+        setTimeout(()=>{ success.textContent = ''; }, 5000);
+      } else {
+        success.textContent = 'Erro ao salvar a mensagem. Tente novamente.';
+      }
+    });
+
+    // limpar erros ao digitar
+    nome.addEventListener('input', ()=>{ errNome.textContent = ''; success.textContent = ''; });
+    mensagem.addEventListener('input', ()=>{ errMsg.textContent = ''; success.textContent = ''; });
+  });
+})();
+
+
+
     document.addEventListener('DOMContentLoaded', () => {
   // delegação única para todos os botões de favorito na página
   document.addEventListener('click', function (ev) {
