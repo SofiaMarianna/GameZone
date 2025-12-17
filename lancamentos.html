@@ -50,26 +50,27 @@
         </div>
     </div>
         <div class="jogos-principal">
+    <div id="lancamentos-container" class="imagens-flex"></div>
+</div>
 
-            <div class="imagens-flex">
-                <div class="game-card">
-                    <img src="img\Portada Oficial Dragón Ball Sparking Zero.jpg" alt="" width="250" height="322">
-                    <button class="fav-btn" data-id="dbz_sparking" data-title="Dragon Ball Sparking Zero" data-img="img\Portada Oficial Dragón Ball Sparking Zero.jpg"><i class="fa-regular fa-star"></i></button>
-                </div>
-                <div class="game-card">
-                    <img src="img\da4d0bfa-e9b8-492d-80bf-08aa25f54cea.jpg" alt="" width="230" height="315">
-                    <button class="fav-btn" data-id="lanc_2" data-title="Lançamento 2" data-img="img\da4d0bfa-e9b8-492d-80bf-08aa25f54cea.jpg"><i class="fa-regular fa-star"></i></button>
-                </div>
-                <div class="game-card">
-                    <img src="img\71mDA8PIXeL._AC_UF1000,1000_QL80_ (1).jpg" alt="" width="233" height="322">
-                    <button class="fav-btn" data-id="ff7_collect" data-title="Final Fantasy VII" data-img="img\71mDA8PIXeL._AC_UF1000,1000_QL80_ (1).jpg"><i class="fa-regular fa-star"></i></button>
-                </div>
-                <div class="game-card">
-                    <img src="img\Sonic_Mania_capa (1).png" alt="" width="260" height="322">
-                    <button class="fav-btn" data-id="sonic_mania" data-title="Sonic Mania" data-img="img\Sonic_Mania_capa (1).png"><i class="fa-regular fa-star"></i></button>
-                </div>
-            </div>
-        </div>
+<div id="modal-detalhes" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <div style="display:flex; gap:16px;">
+      <img id="modal-imagem" src="" alt="" style="width:220px; height:280px; object-fit:cover; border-radius:6px;">
+      <div style="flex:1;">
+        <h2 id="modal-titulo"></h2>
+        <p id="modal-descricao"></p>
+        <p><strong>Categoria:</strong> <span id="modal-categoria"></span></p>
+        <p><strong>Dispositivo:</strong> <span id="modal-dispositivo"></span></p>
+        <p><strong>Data de lançamento:</strong> <span id="modal-data"></span></p>
+        <p><strong>Preço:</strong> R$ <span id="modal-preco"></span></p>
+        <button id="modal-favorito-btn" style="background:#66C0F4; border:none; color:#000; padding:8px 12px; border-radius:6px; cursor:pointer;"><i class="fa-regular fa-star"></i> Adicionar aos Favoritos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         <div class="ver-jogos">
             <button class="botao-jogos">Ver todos os Jogos</button>

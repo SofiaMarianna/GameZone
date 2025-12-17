@@ -255,8 +255,8 @@ ul li {
 .imagens-flex {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    padding-top: 25px;
-    gap: 5px;
+    padding-top: 12px;
+    gap: 8px;
 }
 
 /* Cards de jogo com botão de favorito */
@@ -267,6 +267,28 @@ ul li {
 .game-card img{
     display: block;
     border-radius: 6px;
+}
+.card-meta {
+  align-items: center;
+  gap: 12px;           
+  margin-top: 10px;    
+  padding: 6px 8px;    
+}
+.card-meta h3 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+}
+.card-meta .price {
+  margin: 0;
+  font-weight: 700;
+  color: #cfcfcf;
+  font-size: 14px;
+}
+.card-meta .btn-detalhes {
+  margin-top: 4px;
+  align-self: center; 
 }
 .fav-btn{
     position: absolute;
@@ -286,6 +308,26 @@ ul li {
 .fav-btn:focus{ outline: none; }
 .fav-item h3{ font-size: 14px; margin-top: 8px; color: #fff; }
 
+.btn-detalhes {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 10px;
+  background: linear-gradient(90deg,#66C0F4,#4aa0e6);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  box-shadow: 0 6px 18px rgba(102,192,244,0.18);
+  white-space: nowrap;
+}
+.btn-detalhes:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(102,192,244,0.22); }
+.btn-detalhes:active { transform: translateY(-1px) scale(.995); }
+
+
+
 #favorites-list {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -298,6 +340,34 @@ ul li {
 
 #favorites-list .game-card{ display:block; height:322px; overflow:hidden; }
 #favorites-list .game-card img{ width:100%; height:100%; object-fit:cover; display:block; border-radius:6px; }
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none; /* começa escondido */
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px; right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
 
 @media (max-width: 768px) {
     #favorites-list { display: flex; flex-direction: column; gap: 15px; }
@@ -447,4 +517,109 @@ ul li {
         font-size: 20px;
         align-items: center;
     }
+}
+
+/* Modal de detalhes */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal.show {
+    display: flex !important;
+}
+
+.modal-content {
+    background: #0A0F0D;
+    border: 2px solid #66C0F4;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: #FFF;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content > div {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+}
+
+.modal-content > div > div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-content p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.modal-content h2 {
+    margin: 0 0 12px 0;
+    font-size: 28px;
+}
+
+#modal-favorito-btn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  max-width: 320px;    
+  width: auto;         
+  margin: 20px auto 0; 
+  border: 2px solid #66C0F4;
+  background: transparent;
+  color: #66C0F4;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.12s ease;
+  white-space: nowrap; 
+}
+
+#modal-favorito-btn.favorited {
+  background: #66C0F4;
+  color: #000;
+}
+
+#modal-favorito-btn:active {
+  transform: scale(0.98);
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: #FFF;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.modal-close:hover {
+    color: #66C0F4;
+}
+.imagens-flex {
+    padding-left: 50px;
+    padding-right: 50px;
 }
