@@ -7,7 +7,7 @@ const jogos = [
     { id: 4, titulo: "Sonic Mania", categoria: "Plataforma", preco: 49.90, imagem: "img/Sonic_Mania_capa (1).png", dispositivo: "Portátil", dataLancamento: "2017-08-15", descricao: "Retorno dos clássicos de Sonic com gráficos retrô e gameplay moderno." },
     { id: 5, titulo: "The Witch's House", categoria: "Horror", preco: 34.90, imagem: "img/The Witch'S House.jpg", dispositivo: "PC", dataLancamento: "2012-10-12", descricao: "Um jogo de horror indie atmosférico e perturbador." },
     { id: 6, titulo: "Celeste", categoria: "Plataforma", preco: 19.90, imagem: "img/Indie Review_ Celeste_.jpg", dispositivo: "PC", dataLancamento: "2018-01-25", descricao: "Jogo de plataforma desafiador com uma história emocional." },
-    { id: 7, titulo: "Night in The Woods", categoria: "Aventura", preco: 14.90, imagem: "img/83ec5613-2f8b-4d3d-b859-2992da66a9c7.jpg", dispositivo: "PC", dataLancamento: "2017-02-21", descricao: "Uma aventura narrativa única sobre voltar para casa." },
+    { id: 7, titulo: "Night in The Woods", categoria: "Indie", preco: 14.90, imagem: "img/83ec5613-2f8b-4d3d-b859-2992da66a9c7.jpg", dispositivo: "PC", dataLancamento: "2017-02-21", descricao: "Uma aventura narrativa única sobre voltar para casa." },
     { id: 8, titulo: "Oneshot", categoria: "Puzzle", preco: 9.90, imagem: "img/950e4b74-7bab-44a6-b253-00df49fbedf6.jpg", dispositivo: "PC", dataLancamento: "2016-12-08", descricao: "Um puzzle game conceitual que quebra a quarta parede." },
     { id: 9, titulo: "Dragon Ball Sparking Zero", categoria: "Luta", preco: 282.50, imagem: "img/Portada Oficial Dragón Ball Sparking Zero.jpg", dispositivo: "Console", dataLancamento: "2024-10-10", descricao: "Jogo de luta épico do universo Dragon Ball com gráficos impressionantes." },
     { id: 10, titulo: "Call of Duty: Black Ops III", categoria: "Tiro", preco: 99.90, imagem: "img/da4d0bfa-e9b8-492d-80bf-08aa25f54cea.jpg", dispositivo: "Console", dataLancamento: "2015-11-06", descricao: "Shooter em primeira pessoa com campanha cinética e multiplayer intenso." },
@@ -20,6 +20,140 @@ const jogos = [
     { id: 17, titulo: "Final Fantasy VII: Advent Children", categoria: "RPG", preco: 79.90, imagem: "img/Final Fantasy VII_ Advent Children.jpg", dispositivo: "Console", dataLancamento: "1997-01-31", descricao: "Continuação épica do lendário Final Fantasy VII com gráficos cinematográficos." }
 ];
 
+// ===== Avaliações para jogos Indie =====
+// Estrutura de armazenamento: { [idDoJogo]: { ratings: [1,5,3], avg: 4.0 } }
+const RATINGS_KEY = 'gamezone_ratings';
+
+function loadRatings() {
+  try {
+    const raw = localStorage.getItem(RATINGS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+function saveRatings(obj) {
+  localStorage.setItem(RATINGS_KEY, JSON.stringify(obj));
+}
+function setRatingForGame(gameId, value) {
+  const ratings = loadRatings();
+  if (!ratings[gameId]) ratings[gameId] = { ratings: [] };
+  ratings[gameId].ratings.push(value);
+  // calcular média
+  const arr = ratings[gameId].ratings;
+  ratings[gameId].avg = arr.reduce((s, v) => s + v, 0) / arr.length;
+  saveRatings(ratings);
+  return ratings[gameId];
+}
+function getRatingForGame(gameId) {
+  const ratings = loadRatings();
+  return ratings[gameId] || { ratings: [], avg: 0 };
+}
+
+// Filtrar apenas jogos Indie
+function obterJogosIndie() {
+  return jogos.filter(j => {
+    // ajuste aqui se você usar outra propriedade para marcar indie
+    return String(j.categoria).toLowerCase() === 'indie' || String(j.categoria).toLowerCase() === 'indie ';
+  });
+}
+
+// Renderizar cards Indie com sistema de estrelas
+function renderizarIndie(containerSelector = '.imagens-flex') {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+  const lista = obterJogosIndie();
+  container.innerHTML = '';
+
+  lista.forEach(jogo => {
+    const ratingData = getRatingForGame(jogo.id);
+    const avg = ratingData.avg ? ratingData.avg.toFixed(1) : '—';
+
+    const card = document.createElement('div');
+    card.className = 'game-card indie-card';
+    card.innerHTML = `
+      <img src="${jogo.imagem}" alt="${escapeHtml(jogo.titulo)}" width="250" height="322">
+      <button class="fav-btn" data-id="${jogo.id}" data-title="${escapeHtml(jogo.titulo)}" data-img="${jogo.imagem}">
+        <i class="fa-regular fa-star"></i>
+      </button>
+      <div class="card-meta">
+        <h3>${escapeHtml(jogo.titulo)}</h3>
+        <p class="price">R$ ${jogo.preco.toFixed(2)}</p>
+        <div class="rating" data-id="${jogo.id}">
+          <div class="stars" aria-label="Avaliar ${escapeHtml(jogo.titulo)}">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+          <div class="rating-info">Média: <span class="rating-avg">${avg}</span></div>
+        </div>
+        <button class="btn-detalhes" data-id="${jogo.id}">Ver Detalhes</button>
+      </div>
+    `;
+    container.appendChild(card);
+
+    // marcar estrelas conforme média (visual inicial)
+    const stars = card.querySelectorAll('.star');
+    const avgNum = parseFloat(ratingData.avg || 0);
+    stars.forEach(s => {
+      const v = parseInt(s.dataset.value, 10);
+      if (avgNum >= v) s.classList.add('filled');
+      else s.classList.remove('filled');
+    });
+    // atualizar texto da média
+    const avgEl = card.querySelector('.rating-avg');
+    if (avgEl) avgEl.textContent = ratingData.avg ? ratingData.avg.toFixed(1) : '—';
+  });
+
+  // Delegação de eventos para estrelas (clicar e hover)
+  container.querySelectorAll('.stars').forEach(starsEl => {
+    const gameId = starsEl.closest('.rating').dataset.id;
+
+    // hover: destacar até a estrela
+    starsEl.addEventListener('mouseover', function (e) {
+      const s = e.target.closest('.star');
+      if (!s) return;
+      const val = parseInt(s.dataset.value, 10);
+      starsEl.querySelectorAll('.star').forEach(st => {
+        st.classList.toggle('hover', parseInt(st.dataset.value, 10) <= val);
+      });
+    });
+    starsEl.addEventListener('mouseout', function () {
+      starsEl.querySelectorAll('.star').forEach(st => st.classList.remove('hover'));
+    });
+
+    // click: registrar nota
+    starsEl.addEventListener('click', function (e) {
+      const s = e.target.closest('.star');
+      if (!s) return;
+      const val = parseInt(s.dataset.value, 10);
+      const result = setRatingForGame(gameId, val); // salva e retorna dados atualizados
+
+      // atualizar UI: média e preenchimento
+      const parentCard = starsEl.closest('.game-card');
+      if (!parentCard) return;
+      const avgEl = parentCard.querySelector('.rating-avg');
+      if (avgEl) avgEl.textContent = result.avg ? result.avg.toFixed(1) : '—';
+
+      parentCard.querySelectorAll('.star').forEach(st => {
+        const v = parseInt(st.dataset.value, 10);
+        st.classList.toggle('filled', result.avg >= v);
+      });
+    });
+  });
+
+  // inicializar botões detalhes e favoritos (reaproveita funções existentes)
+  container.querySelectorAll('.btn-detalhes').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const id = parseInt(this.dataset.id, 10);
+      const jogo = jogos.find(j => j.id === id);
+      if (jogo) abrirModal(jogo);
+    });
+  });
+  container.querySelectorAll('.fav-btn').forEach(b => updateFavVisual(b));
+}
 
 // seleciona o catálogo principal, evitando o container de favoritos (que também usa .imagens-flex)
 const catalogo = document.querySelector('.imagens-flex:not(#favorites-list)');
@@ -388,62 +522,52 @@ function renderizarCatalogo(jogosList) {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // delegação única para todos os botões de favorito na página
-        document.addEventListener('click', function (ev) {
-            var btn = ev.target.closest('.fav-btn');
-            if (!btn) {
-                return;
-            }
+  // delegação única para todos os botões de favorito na página
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('.fav-btn');
+    if (!btn) return;
+    ev.stopPropagation();
+    var game = { id: btn.dataset.id, title: btn.dataset.title || '', img: btn.dataset.img || '' };
+    toggleFav(game);
+    document.querySelectorAll('.fav-btn[data-id="' + game.id + '"]').forEach(function (d) { updateFavVisual(d); });
+    var favContainer = document.querySelector('#favorites-list');
+    var showBtnLocal = document.querySelector('#show-all-btn');
+    var showAll = showBtnLocal && showBtnLocal.dataset.show === 'true';
+    if (favContainer) renderFavorites(favContainer, showAll);
+  });
 
-            ev.stopPropagation();
-
-            var game = {
-                id: btn.dataset.id,
-                title: btn.dataset.title || '',
-                img: btn.dataset.img || ''
-            };
-
-            toggleFav(game);
-
-            // atualizar todas as instâncias do mesmo botão (catalogo + favoritos)
-            document.querySelectorAll('.fav-btn[data-id="' + game.id + '"]').forEach(function (d) {
-                updateFavVisual(d);
-            });
-
-            var favContainer = document.querySelector('#favorites-list');
-            var showBtnLocal = document.querySelector('#show-all-btn');
-            var showAll = showBtnLocal && showBtnLocal.dataset.show === 'true';
-            if (favContainer) {
-                renderFavorites(favContainer, showAll);
-            }
-        });
-
-        const favContainer = document.querySelector('#favorites-list');
-        const showBtn = document.querySelector('#show-all-btn');
-        if (favContainer) renderFavorites(favContainer, false);
-        if (showBtn && favContainer){
-            showBtn.addEventListener('click', function () {
-                var currently = showBtn.dataset.show === 'true';
-                renderFavorites(favContainer, !currently);
-            });
-        }
-
-        // Inicializar catálogo interativo na página index
-        if (catalogo) {
-            renderizarCatalogo(jogos);
-            inicializarFiltros();
-        }
-        // Inicializar página de lançamentos (se existir)
-        var lancContainer = document.getElementById('lancamentos-container');
-        if (lancContainer) {
-            carregarLancamentos();
-        }
-
-        // Modal: fechar ao clicar no X ou fora do conteúdo
-        var modal = document.getElementById('modal-detalhes');
-        var closeBtn = document.querySelector('.modal-close');
-        if (closeBtn) closeBtn.addEventListener('click', fecharModal);
-        if (modal) {
-            window.addEventListener('click', function(e){ if (e.target === modal) fecharModal(); });
-        }
+  // inicializações de favoritos / show all
+  const favContainer = document.querySelector('#favorites-list');
+  const showBtn = document.querySelector('#show-all-btn');
+  if (favContainer) renderFavorites(favContainer, false);
+  if (showBtn && favContainer) {
+    showBtn.addEventListener('click', function () {
+      var currently = showBtn.dataset.show === 'true';
+      renderFavorites(favContainer, !currently);
     });
+  }
+
+  // Inicializar catálogo interativo na página index (se existir)
+  if (catalogo) {
+    renderizarCatalogo(jogos);
+    inicializarFiltros();
+  }
+
+  // Inicializar página de lançamentos (se existir)
+  var lancContainer = document.getElementById('lancamentos-container');
+  if (lancContainer) carregarLancamentos();
+
+  // Inicializar página Indie (se existir container específico)
+  var indieContainer = document.getElementById('indie-container');
+  if (indieContainer) {
+    renderizarIndie('#indie-container'); // chama a função que monta os cards indie
+  }
+
+  // Modal: fechar ao clicar no X ou fora do conteúdo
+  var modal = document.getElementById('modal-detalhes');
+  var closeBtn = document.querySelector('.modal-close');
+  if (closeBtn) closeBtn.addEventListener('click', fecharModal);
+  if (modal) {
+    window.addEventListener('click', function (e) { if (e.target === modal) fecharModal(); });
+  }
+});

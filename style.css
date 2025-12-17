@@ -623,3 +623,11 @@ ul li {
     padding-left: 140px;
     padding-right: 160px;
 }
+
+.rating { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.stars { display:inline-flex; gap:6px; cursor:pointer; user-select:none; }
+.star { font-size:18px; color:#444; transition: color .12s ease, transform .08s ease; }
+.star.filled { color:#FFD166; } 
+.star.hover { color:#FFB84D; transform: translateY(-2px); }
+.rating-info { font-size:13px; color:#cfcfcf; margin-top:2px; }
+.indie-card .card-meta { gap:8px; padding:6px 8px; }
