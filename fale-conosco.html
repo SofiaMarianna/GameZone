@@ -29,26 +29,35 @@
         </nav>
     </header>
     
+    <main class="main-contact">
     <div class="titulo-contato">
-        <h1>Fale Conosco</h1>
-        
+      <h1>Fale Conosco</h1>
     </div>
-        <div class="jogos-principal">
 
-            <div class="form-container">
-                <form class="form">
-                <div class="form-group">
-                    <label for="email">Seu Email</label>
-                    <input type="text" id="email" name="email" required="">
-                </div>
-                <div class="form-group">
-                    <label for="textarea">Como podemos te ajudar?</label>
-                    <textarea name="textarea" id="textarea" rows="10" cols="50" required="">          </textarea>
-                </div>
-                <button class="form-submit-btn" type="submit">Enviar</button>
-                </form>
-            </div>
-        </div>
+    <section class="contact-area">
+      <div class="form-container">
+        <form id="contactForm" novalidate>
+          <div class="form-group">
+            <label for="nome">Seu Nome</label>
+            <input id="nome" name="nome" type="text" autocomplete="name" />
+            <div class="error" id="err-nome" aria-live="polite"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="mensagem">Como podemos te ajudar?</label>
+            <textarea id="mensagem" name="mensagem" rows="6"></textarea>
+            <div class="error" id="err-mensagem" aria-live="polite"></div>
+          </div>
+
+          <div class="form-actions">
+            <button class="form-submit-btn" type="submit">Enviar</button>
+          </div>
+
+          <div id="form-success" class="form-success" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+  </main>
 
         <footer class="rodape">
             <ul class="lista1-rodape">
