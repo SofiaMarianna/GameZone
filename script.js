@@ -16,11 +16,12 @@ const jogos = [
     { id: 13, titulo: "Doom", categoria: "Tiro", preco: 79.90, imagem: "img/doom-cover.jpg", dispositivo: "PC" },
     { id: 14, titulo: "Disco Elysium: The Final Cut", categoria: "RPG", preco: 44.90, imagem: "img/7b7d20d1-9772-40c4-bf23-236cdc3388b1.jpg", dispositivo: "PC" },
     { id: 15, titulo: "Minecraft", categoria: "Simulação", preco: 199.90, imagem: "img/Minecraft.jpg", dispositivo: "PC" },
-    { id: 16, titulo: "Sonic the Hedgehog", categoria: "Plataforma", preco: 39.90, imagem: "img/Sonic the Hedgehog (jogo eletrônico de 2006) – Wikipédia, a enciclopédia livre.jpg", dispositivo: "Console" },
+    { id: 16, titulo: "Sonic the Hedgehog", categoria: "Plataforma", preco: 39.90, imagem: "img/Sonic the Hedgehog (jogo eletrônico de 2006).jpg", dispositivo: "Console" },
     { id: 17, titulo: "Final Fantasy VII: Advent Children", categoria: "RPG", preco: 79.90, imagem: "img/Final Fantasy VII_ Advent Children.jpg", dispositivo: "Console" }
 ];
 
-const catalogo = document.querySelector('.imagens-flex');
+// seleciona o catálogo principal, evitando o container de favoritos (que também usa .imagens-flex)
+const catalogo = document.querySelector('.imagens-flex:not(#favorites-list)');
 const botoesDispositivos = document.querySelectorAll('.titulo .botao');
 const botaoVerTodos = document.querySelector('.botao-jogos');
 const inputBusca = document.querySelector('#busca-jogos');
@@ -57,89 +58,146 @@ LIsdanav.forEach(li => {
 });
 
 
-/*Favoritos (localStorage) + rendering para mostrar todos na página favoritos*/
+/* Favoritos: locastorage e renderização */
 const FAV_KEY = 'gamezone_favs';
 
-    function getFavorites(){
-        const raw = localStorage.getItem(FAV_KEY);
-        try { return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
-    }
-    function saveFavorites(favs){
-        localStorage.setItem(FAV_KEY, JSON.stringify(favs));
-    }
-    function isFavorite(id){ return getFavorites().some(g => g.id === id); }
-    function addFavorite(game){ const favs = getFavorites(); if (!favs.some(g => g.id === game.id)) { favs.push(game); saveFavorites(favs); } }
-    function removeFavorite(id){ const favs = getFavorites().filter(g => g.id !== id); saveFavorites(favs); }
-    function toggleFavorite(game){ if (isFavorite(game.id)) removeFavorite(game.id); else addFavorite(game); }
-
-    function updateFavButton(btn, fav){
-        if (!btn) return;
-        const icon = btn.querySelector('i');
-        if (icon){
-            if (fav){ icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); }
-            else { icon.classList.remove('fa-solid'); icon.classList.add('fa-regular'); }
+function loadFavs() {
+    try {
+        var raw = localStorage.getItem(FAV_KEY);
+        if (raw) {
+            return JSON.parse(raw);
         }
-        // visual fallback: color the button gold when favorite
-        btn.style.color = fav ? '#ffd700' : '';
+        return [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveFavs(arr) {
+    localStorage.setItem(FAV_KEY, JSON.stringify(arr));
+}
+
+function isFav(id) {
+    var favs = loadFavs();
+    return favs.some(function (g) {
+        return String(g.id) === String(id);
+    });
+}
+
+function addFav(game) {
+    var favs = loadFavs();
+    var exists = favs.some(function (g) {
+        return String(g.id) === String(game.id);
+    });
+
+    if (!exists) {
+        favs.push(game);
+        saveFavs(favs);
+    }
+}
+
+function removeFav(id) {
+    var favs = loadFavs();
+    var next = favs.filter(function (g) {
+        return String(g.id) !== String(id);
+    });
+    saveFavs(next);
+}
+
+function toggleFav(game) {
+    if (isFav(game.id)) {
+        removeFav(game.id);
+    } else {
+        addFav(game);
+    }
+}
+
+function updateFavVisual(btn) {
+    if (!btn) {
+        return;
     }
 
-    function escapeHtml(str){ return String(str || '').replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[s])); }
+    var icon = btn.querySelector('i');
+    var fav = isFav(btn.dataset.id);
 
-    // ===== FUNÇÕES PARA CATÁLOGO INTERATIVO =====
-    function filtrarJogos() {
-        let jogosFilterados = jogos;
-
-        // Filtrar por dispositivo
-        if (filtroAtivo) {
-            jogosFilterados = jogosFilterados.filter(jogo => jogo.dispositivo === filtroAtivo);
+    if (icon) {
+        if (fav) {
+            icon.classList.add('fa-solid');
+            icon.classList.remove('fa-regular');
+        } else {
+            icon.classList.add('fa-regular');
+            icon.classList.remove('fa-solid');
         }
-
-        // Filtrar por busca (nome)
-        if (buscaAtiva.trim()) {
-            const busca = buscaAtiva.toLowerCase();
-            jogosFilterados = jogosFilterados.filter(jogo => 
-                jogo.titulo.toLowerCase().includes(busca)
-            );
-        }
-
-        return jogosFilterados;
     }
 
-    function renderizarCatalogo(jogosList) {
-        if (!catalogo) return;
-
-        catalogo.innerHTML = '';
-
-        if (jogosList.length === 0) {
-            catalogo.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Nenhum jogo encontrado.</p>';
-            return;
-        }
-
-        jogosList.forEach(jogo => {
-            const div = document.createElement('div');
-            div.className = 'game-card';
-            div.innerHTML = `
-                <img src="${jogo.imagem}" alt="${escapeHtml(jogo.titulo)}" width="250" height="322">
-                <button class="fav-btn" data-id="${jogo.id}" data-title="${escapeHtml(jogo.titulo)}" data-img="${jogo.imagem}">
-                    <i class="fa-regular fa-star"></i>
-                </button>
-            `;
-            catalogo.appendChild(div);
-        });
-
-        // Inicializar botões de favoritos para os novos elementos
-        catalogo.querySelectorAll('.fav-btn').forEach(btn => {
-            const id = btn.dataset.id;
-            updateFavButton(btn, isFavorite(id));
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                const game = { id, title: btn.dataset.title || '', img: btn.dataset.img || '' };
-                toggleFavorite(game);
-                const fav = isFavorite(id);
-                updateFavButton(btn, fav);
-            });
-        });
+    if (fav) {
+        btn.style.color = '#ffd700';
+    } else {
+        btn.style.color = '';
     }
+}
+
+function escapeHtml(str) {
+    var s = String(str || '');
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+
+    return s.replace(/[&<>"']/g, function (m) {
+        return map[m];
+    });
+}
+
+// função de catálogo interativo
+function filtrarJogos() {
+    let jogosFilterados = jogos;
+
+    // Filtrar por dispositivo
+    if (filtroAtivo) {
+        jogosFilterados = jogosFilterados.filter(jogo => jogo.dispositivo === filtroAtivo);
+    }
+
+    // Filtrar por busca (nome)
+    if (buscaAtiva.trim()) {
+        const busca = buscaAtiva.toLowerCase();
+        jogosFilterados = jogosFilterados.filter(jogo => 
+            jogo.titulo.toLowerCase().includes(busca)
+        );
+     }
+     return jogosFilterados;
+}
+
+function renderizarCatalogo(jogosList) {
+    if (!catalogo) return;
+
+    catalogo.innerHTML = '';
+
+    if (jogosList.length === 0) {
+        catalogo.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Nenhum jogo encontrado.</p>';
+        return;
+    }
+
+    jogosList.forEach(jogo => {
+        const div = document.createElement('div');
+        div.className = 'game-card';
+        div.innerHTML = `
+            <img src="${jogo.imagem}" alt="${escapeHtml(jogo.titulo)}" width="250" height="322">
+            <button class="fav-btn" data-id="${jogo.id}" data-title="${escapeHtml(jogo.titulo)}" data-img="${jogo.imagem}">
+                <i class="fa-regular fa-star"></i>
+            </button>
+        `;
+        catalogo.appendChild(div);
+    });
+
+    // Inicializar visual dos botões (eventos são delegados globalmente)
+    catalogo.querySelectorAll('.fav-btn').forEach(function (btn) {
+        updateFavVisual(btn);
+    });
+}
 
     function aplicarFiltros() {
         const jogosFiltrados = filtrarJogos();
@@ -176,63 +234,93 @@ const FAV_KEY = 'gamezone_favs';
     }
 
     function renderFavorites(container, showAll = false){
-        const favs = getFavorites();
-        if (!container) return;
-        if (!favs.length){ container.innerHTML = '<p>Você não tem favoritos.</p>'; const showBtn = document.querySelector('#show-all-btn'); if (showBtn) showBtn.style.display = 'none'; return; }
+            var favs = loadFavs();
+            if (!container) {
+                return;
+            }
 
-        const toShow = showAll ? favs : favs.slice(0,4);
-        container.innerHTML = toShow.map(g =>
-            `<div class="game-card fav-item">
-                <img src="${g.img}" alt="${escapeHtml(g.title)}" width="250" height="322">
-                <button class="fav-btn" data-id="${g.id}" data-title="${escapeHtml(g.title)}" data-img="${g.img}"><i class="fa-solid fa-star"></i></button>
-            </div>`
-        ).join('');
+            if (!favs || favs.length === 0) {
+                container.innerHTML = '<p style="color: #FFF; grid-column: 1/-1; text-align: center; padding: 20px;">Você não tem favoritos.</p>';
+                var showBtnNone = document.querySelector('#show-all-btn');
+                if (showBtnNone) {
+                    showBtnNone.style.display = 'none';
+                }
+                return;
+            }
 
-        container.querySelectorAll('.fav-btn').forEach(btn => {
-            updateFavButton(btn, true);
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                const id = btn.dataset.id;
-                removeFavorite(id);
-                renderFavorites(container, showAll);
-                document.querySelectorAll(`.fav-btn[data-id="${id}"]`).forEach(b => updateFavButton(b, false));
+            var toShow;
+            if (showAll) {
+                toShow = favs;
+            } else {
+                toShow = favs.slice(0, 4);
+            }
+
+            container.innerHTML = toShow.map(function (g) {
+                return '<div class="game-card fav-item">' +
+                    '<img src="' + g.img + '" alt="' + escapeHtml(g.title) + '" width="250" height="322">' +
+                    '<button class="fav-btn" data-id="' + g.id + '" data-title="' + escapeHtml(g.title) + '" data-img="' + g.img + '"><i class="fa-solid fa-star"></i></button>' +
+                    '</div>';
+            }).join('');
+
+            container.querySelectorAll('.fav-btn').forEach(function (b) {
+                updateFavVisual(b);
             });
-        });
 
-        const showBtn = document.querySelector('#show-all-btn');
-        if (showBtn){
-            if (favs.length <= 4) { showBtn.style.display = 'none'; }
-            else { showBtn.style.display = ''; showBtn.textContent = showAll ? 'Mostrar apenas 4' : 'Ver todos os Jogos'; showBtn.dataset.show = showAll ? 'true' : 'false'; }
-        }
+            var showBtn = document.querySelector('#show-all-btn');
+            if (showBtn) {
+                if (favs.length <= 4) {
+                    showBtn.style.display = 'none';
+                } else {
+                    showBtn.style.display = '';
+                    if (showAll) {
+                        showBtn.textContent = 'Mostrar apenas 4';
+                        showBtn.dataset.show = 'true';
+                    } else {
+                        showBtn.textContent = 'Ver todos os Jogos';
+                        showBtn.dataset.show = 'false';
+                    }
+                }
+            }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // initialize favorite buttons across pages
-        document.querySelectorAll('.fav-btn').forEach(btn => {
-            const id = btn.dataset.id;
-            updateFavButton(btn, isFavorite(id));
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                const game = { id, title: btn.dataset.title || '', img: btn.dataset.img || '' };
-                toggleFavorite(game);
-                const fav = isFavorite(id);
-                updateFavButton(btn, fav);
-                // if on favoritos page, re-render preserving current show state
-                const favContainer = document.querySelector('#favorites-list');
-                const showBtn = document.querySelector('#show-all-btn');
-                const showAll = showBtn && showBtn.dataset.show === 'true';
-                if (favContainer) renderFavorites(favContainer, showAll);
+        // delegação única para todos os botões de favorito na página
+        document.addEventListener('click', function (ev) {
+            var btn = ev.target.closest('.fav-btn');
+            if (!btn) {
+                return;
+            }
+
+            ev.stopPropagation();
+
+            var game = {
+                id: btn.dataset.id,
+                title: btn.dataset.title || '',
+                img: btn.dataset.img || ''
+            };
+
+            toggleFav(game);
+
+            // atualizar todas as instâncias do mesmo botão (catalogo + favoritos)
+            document.querySelectorAll('.fav-btn[data-id="' + game.id + '"]').forEach(function (d) {
+                updateFavVisual(d);
             });
+
+            var favContainer = document.querySelector('#favorites-list');
+            var showBtnLocal = document.querySelector('#show-all-btn');
+            var showAll = showBtnLocal && showBtnLocal.dataset.show === 'true';
+            if (favContainer) {
+                renderFavorites(favContainer, showAll);
+            }
         });
 
         const favContainer = document.querySelector('#favorites-list');
         const showBtn = document.querySelector('#show-all-btn');
         if (favContainer) renderFavorites(favContainer, false);
         if (showBtn && favContainer){
-            showBtn.addEventListener('click', (e) => {
-                const currently = showBtn.dataset.show === 'true';
-                const next = !currently;
-                renderFavorites(favContainer, next);
+            showBtn.addEventListener('click', function () {
+                var currently = showBtn.dataset.show === 'true';
+                renderFavorites(favContainer, !currently);
             });
         }
 
