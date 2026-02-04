@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - GameZone (API Test)</title>
+  <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;background:#111;color:#eee}label{display:block;margin-top:8px}input,textarea,select{width:100%;padding:6px;margin-top:4px}button{margin-top:10px;padding:8px 12px} .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px} .list{margin-top:20px} .item{background:#222;padding:10px;border-radius:6px;margin-bottom:8px}</style>
+</head>
+<body>
+  <h1>Admin — Teste de API</h1>
+  <p>Use este painel para testar <strong>GET/POST/PUT/DELETE</strong> com <em>fetch</em> ou <em>axios</em>.</p>
+
+  <div>
+    <h2>Criar novo jogo (POST)</h2>
+    <form id="create-form">
+      <label>Título<input id="f-titulo"></label>
+      <label>Categoria<input id="f-categoria"></label>
+      <label>Preço<input id="f-preco" type="number" step="0.01"></label>
+      <label>Imagem (caminho)<input id="f-imagem"></label>
+      <label>Dispositivo<input id="f-dispositivo"></label>
+      <label>Data de Lançamento<input id="f-data" type="date"></label>
+      <label>Descrição<textarea id="f-desc"></textarea></label>
+      <button type="submit">Criar (fetch)</button>
+    </form>
+  </div>
+
+  <div class="list">
+    <h2>Jogos (GET)</h2>
+    <button id="refresh">Atualizar lista</button>
+    <div id="games-list"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./api.js"></script>
+  <script>
+    const listEl = document.getElementById('games-list');
+    const refresh = document.getElementById('refresh');
+
+    async function renderList(){
+      listEl.innerHTML = '<p>Carregando...</p>';
+      try{
+        const jogos = await window.apiFetch.getJogos();
+        if(!jogos || jogos.length===0) { listEl.innerHTML = '<p>Nenhum jogo.</p>'; return; }
+        listEl.innerHTML = jogos.map(j=> `<div class="item"><strong>${j.titulo}</strong> — R$ ${Number(j.preco).toFixed(2)}<br><small>ID:${j.id}</small><br>
+          <button data-id="${j.id}" class="btn-edit">Editar (PUT)</button>
+          <button data-id="${j.id}" class="btn-delete">Deletar (DELETE)</button>
+        </div>`).join('');
+
+        listEl.querySelectorAll('.btn-delete').forEach(b=>b.addEventListener('click', async ()=>{
+          if(!confirm('Confirmar exclusão?')) return;
+          try{ await window.apiFetch.deleteJogo(b.dataset.id); alert('Deletado'); renderList(); }catch(e){alert('Falha: '+e.message)}
+        }));
+
+        listEl.querySelectorAll('.btn-edit').forEach(b=>b.addEventListener('click', async ()=>{
+          const id = b.dataset.id;
+          const jogo = await window.apiFetch.getJogo(id);
+          const novoTitulo = prompt('Novo título', jogo.titulo);
+          if (novoTitulo === null) return;
+          jogo.titulo = novoTitulo;
+          await window.apiFetch.updateJogo(id, jogo);
+          alert('Atualizado');
+          renderList();
+        }));
+
+      }catch(e){ listEl.innerHTML = '<p>Erro ao obter jogos: '+ e.message +'</p>'; }
+    }
+
+    document.getElementById('create-form').addEventListener('submit', async (ev)=>{
+      ev.preventDefault();
+      const novo = {
+        titulo: document.getElementById('f-titulo').value,
+        categoria: document.getElementById('f-categoria').value,
+        preco: parseFloat(document.getElementById('f-preco').value) || 0,
+        imagem: document.getElementById('f-imagem').value,
+        dispositivo: document.getElementById('f-dispositivo').value,
+        dataLancamento: document.getElementById('f-data').value,
+        descricao: document.getElementById('f-desc').value
+      };
+      try{
+        const criado = await window.apiFetch.createJogo(novo);
+        alert('Criado com id ' + criado.id);
+        renderList();
+      }catch(e){ alert('Falha ao criar: '+ e.message); }
+    });
+
+    refresh.addEventListener('click', renderList);
+
+    renderList();
+  </script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 // Dados dos jogos
 
-const jogos = [
+let jogos = [];
+const jogosLocal = [
     { id: 1, titulo: "Tomb Raider", categoria: "Ação", preco: 89.90, imagem: "img/eOtEAB7 (1).jpg", dispositivo: "PC", dataLancamento: "2013-03-05", descricao: "Uma aventura épica com Lara Croft em busca de artefatos antigos." },
     { id: 2, titulo: "Street Fighter IV", categoria: "Luta", preco: 59.90, imagem: "img/SFIVcover (1).jpg", dispositivo: "Console", dataLancamento: "2008-07-18", descricao: "Jogo de luta clássico com personagens icônicos e combos incríveis." },
     { id: 3, titulo: "The Legend of Zelda: Tears of the Kingdom", categoria: "Aventura", preco: 369.90, imagem: "img/71mDA8PIXeL._AC_UF1000,1000_QL80_ (1).jpg", dispositivo: "Portátil", dataLancamento: "2023-05-12", descricao: "A sequência esperada de Breath of the Wild com novos poderes e mecânicas." },
@@ -521,6 +522,76 @@ function renderizarCatalogo(jogosList) {
             }
     }
 
+    // Função auxiliar para exibir status da API
+    function showApiStatus(isOnline){
+        var existing = document.getElementById('api-status-banner');
+        if (!existing){
+            existing = document.createElement('div');
+            existing.id = 'api-status-banner';
+            existing.style.position = 'fixed';
+            existing.style.right = '16px';
+            existing.style.bottom = '16px';
+            existing.style.padding = '8px 12px';
+            existing.style.borderRadius = '6px';
+            existing.style.zIndex = '9999';
+            existing.style.fontSize = '13px';
+            document.body.appendChild(existing);
+        }
+        existing.textContent = isOnline ? 'API: online (json-server)' : 'API: offline — usando dados locais';
+        existing.style.background = isOnline ? '#2e7d32' : '#b71c1c';
+        existing.style.color = '#fff';
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        // tentar carregar jogos da API (json-server) via apiFetch, se falhar usar jogosLocal como fallback
+        try {
+            var online = false;
+            if (window.apiFetch && typeof window.apiFetch.ping === 'function'){
+                online = await window.apiFetch.ping();
+            } else {
+                // fallback direto
+                const r = await fetch('http://localhost:3000/jogos');
+                online = r.ok;
+            }
+
+            showApiStatus(online);
+
+            if (online && window.apiFetch){
+                try{
+                    jogos = await window.apiFetch.getJogos();
+                }catch(e){
+                    console.warn('Falha ao buscar via apiFetch, usando local.', e);
+                    jogos = jogosLocal;
+                }
+            } else if (online && window.apiAxios){
+                try{
+                    jogos = await window.apiAxios.getJogos();
+                }catch(e){
+                    console.warn('Falha ao buscar via axios, usando local.', e);
+                    jogos = jogosLocal;
+                }
+        } else {
+            jogos = jogosLocal;
+        }
+        } catch (e) {
+            console.error('Erro ao carregar jogos:', e);
+            jogos = jogosLocal;
+        }
+
+        // delegação única para todos os botões de favorito na página
+        document.addEventListener('click', function (ev) {
+            var btn = ev.target.closest('.fav-btn');
+            if (!btn) {
+                return;
+            }
+
+            ev.stopPropagation();
+
+            var game = {
+                id: btn.dataset.id,
+                title: btn.dataset.title || '',
+                img: btn.dataset.img || ''
+            };
     // Coloque este cód// contato.js
 (function(){
   const FORM_KEY = 'gamezone_messages';

@@ -1,0 +1,194 @@
+{
+  "jogos": [
+    {
+      "id": "1",
+      "titulo": "Tomb Raider",
+      "categoria": "Ação",
+      "preco": 89.9,
+      "imagem": "img/eOtEAB7 (1).jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2013-03-05",
+      "descricao": "Uma aventura épica com Lara Croft em busca de artefatos antigos."
+    },
+    {
+      "id": "2",
+      "titulo": "Street Fighter IV",
+      "categoria": "Luta",
+      "preco": 59.9,
+      "imagem": "img/SFIVcover (1).jpg",
+      "dispositivo": "Console",
+      "dataLancamento": "2008-07-18",
+      "descricao": "Jogo de luta clássico com personagens icônicos e combos incríveis."
+    },
+    {
+      "id": "3",
+      "titulo": "The Legend of Zelda: Tears of the Kingdom",
+      "categoria": "Aventura",
+      "preco": 369.9,
+      "imagem": "img/71mDA8PIXeL._AC_UF1000,1000_QL80_ (1).jpg",
+      "dispositivo": "Portátil",
+      "dataLancamento": "2023-05-12",
+      "descricao": "A sequência esperada de Breath of the Wild com novos poderes e mecânicas."
+    },
+    {
+      "id": "4",
+      "titulo": "Sonic Mania",
+      "categoria": "Plataforma",
+      "preco": 49.9,
+      "imagem": "img/Sonic_Mania_capa (1).png",
+      "dispositivo": "Portátil",
+      "dataLancamento": "2017-08-15",
+      "descricao": "Retorno dos clássicos de Sonic com gráficos retrô e gameplay moderno."
+    },
+    {
+      "id": "5",
+      "titulo": "The Witch's House",
+      "categoria": "Horror",
+      "preco": 34.9,
+      "imagem": "img/The Witch'S House.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2012-10-12",
+      "descricao": "Um jogo de horror indie atmosférico e perturbador."
+    },
+    {
+      "id": "6",
+      "titulo": "Celeste",
+      "categoria": "Plataforma",
+      "preco": 19.9,
+      "imagem": "img/Indie Review_ Celeste_.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2018-01-25",
+      "descricao": "Jogo de plataforma desafiador com uma história emocional."
+    },
+    {
+      "id": "7",
+      "titulo": "Night in The Woods",
+      "categoria": "Aventura",
+      "preco": 14.9,
+      "imagem": "img/83ec5613-2f8b-4d3d-b859-2992da66a9c7.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2017-02-21",
+      "descricao": "Uma aventura narrativa única sobre voltar para casa."
+    },
+    {
+      "id": "8",
+      "titulo": "Oneshot",
+      "categoria": "Puzzle",
+      "preco": 9.9,
+      "imagem": "img/950e4b74-7bab-44a6-b253-00df49fbedf6.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2016-12-08",
+      "descricao": "Um puzzle game conceitual que quebra a quarta parede."
+    },
+    {
+      "id": "9",
+      "titulo": "Dragon Ball Sparking Zero",
+      "categoria": "Luta",
+      "preco": 282.5,
+      "imagem": "img/Portada Oficial Dragón Ball Sparking Zero.jpg",
+      "dispositivo": "Console",
+      "dataLancamento": "2024-10-10",
+      "descricao": "Jogo de luta épico do universo Dragon Ball com gráficos impressionantes."
+    },
+    {
+      "id": "10",
+      "titulo": "Call of Duty: Black Ops III",
+      "categoria": "Tiro",
+      "preco": 99.9,
+      "imagem": "img/da4d0bfa-e9b8-492d-80bf-08aa25f54cea.jpg",
+      "dispositivo": "Console",
+      "dataLancamento": "2015-11-06",
+      "descricao": "Shooter em primeira pessoa com campanha cinética e multiplayer intenso."
+    },
+    {
+      "id": "11",
+      "titulo": "Super Mario Galaxy",
+      "categoria": "Plataforma",
+      "preco": 119.9,
+      "imagem": "img/Game_ Super Mario Galaxy.jpg",
+      "dispositivo": "Portátil",
+      "dataLancamento": "2007-11-01",
+      "descricao": "Aventura de plataforma em ambientes espaciais com gravidade única."
+    },
+    {
+      "id": "12",
+      "titulo": "Pokemon Sword",
+      "categoria": "RPG",
+      "preco": 299.9,
+      "imagem": "img/Pokemon Sword - Nintendo Switch (European Version) $51_91.jpg",
+      "dispositivo": "Portátil",
+      "dataLancamento": "2019-11-15",
+      "descricao": "RPG Pokémon com nova região e pokémons incríveis."
+    },
+    {
+      "id": "13",
+      "titulo": "Doom",
+      "categoria": "Tiro",
+      "preco": 79.9,
+      "imagem": "img/doom-cover.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2016-05-13",
+      "descricao": "Shooter clássico que redefiniu o gênero com ação alucinante."
+    },
+    {
+      "id": "14",
+      "titulo": "Disco Elysium: The Final Cut",
+      "categoria": "RPG",
+      "preco": 44.9,
+      "imagem": "img/7b7d20d1-9772-40c4-bf23-236cdc3388b1.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2019-10-15",
+      "descricao": "RPG narrativo único com investigação e personagens memoráveis."
+    },
+    {
+      "id": "15",
+      "titulo": "Minecraft",
+      "categoria": "Simulação",
+      "preco": 199.9,
+      "imagem": "img/Minecraft.jpg",
+      "dispositivo": "PC",
+      "dataLancamento": "2011-11-18",
+      "descricao": "Sandbox de blocos infinito para criar, explorar e sobreviver."
+    },
+    {
+      "id": "16",
+      "titulo": "Sonic the Hedgehog",
+      "categoria": "Plataforma",
+      "preco": 39.9,
+      "imagem": "img/Sonic the Hedgehog (jogo eletrônico de 2006) – Wikipédia, a enciclopédia livre.jpg",
+      "dispositivo": "Console",
+      "dataLancamento": "2006-11-14",
+      "descricao": "Jogo de ação rápido com o famoso ouriço azul."
+    },
+    {
+      "id": "17",
+      "titulo": "Final Fantasy VII: Advent Children",
+      "categoria": "RPG",
+      "preco": 79.9,
+      "imagem": "img/Final Fantasy VII_ Advent Children.jpg",
+      "dispositivo": "Console",
+      "dataLancamento": "1997-01-31",
+      "descricao": "Continuação épica do lendário Final Fantasy VII com gráficos cinematográficos."
+    },
+    {
+      "id": "d720",
+      "titulo": "API Test Item 1770236446",
+      "categoria": "Teste",
+      "preco": 1.23,
+      "imagem": "",
+      "dispositivo": "PC",
+      "dataLancamento": "2026-02-04",
+      "descricao": "Criado por script de teste"
+    },
+    {
+      "id": "e0c9",
+      "titulo": "API Test Item 1770236470",
+      "categoria": "Teste",
+      "preco": 1.23,
+      "imagem": "",
+      "dispositivo": "PC",
+      "dataLancamento": "2026-02-04",
+      "descricao": "Criado por script de teste"
+    }
+  ]
+}
