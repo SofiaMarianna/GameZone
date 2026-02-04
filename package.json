@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "json-server": "json-server --watch db.json --port 3000",
+    "test-api:sh": "bash ./scripts/test-api.sh",
+    "test-api:ps": "powershell -ExecutionPolicy Bypass -File ./scripts/test-api.ps1"
+  },
+  "devDependencies": {
+    "axios": "^1.13.4",
+    "json-server": "^1.0.0-beta.5"
+  }
+}
